@@ -1,1 +1,57 @@
+:root {
+  --bg: #ffe6eb;
+  --text: #000;
+  --card: #fff;
+}
 
+.dark {
+  --bg: #0f0f14;
+  --text: #ff4d6d;
+  --card: #1c1c28;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 30px;
+}
+
+input, textarea {
+  width: 90%;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  padding: 12px 20px;
+  margin: 10px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.yes {
+  background: #ff4d6d;
+  color: white;
+}
+
+.no {
+  background: #444;
+  color: white;
+}
+
+#valentines p {
+  background: var(--card);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+footer {
+  margin-top: 40px;
+  font-size: 12px;
+  opacity: 0.7;
+}
