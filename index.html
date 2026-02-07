@@ -65,25 +65,35 @@
       margin-top: 10px;
     }
 
+    #musicBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: auto;
+      padding: 12px 18px;
+      border-radius: 50px;
+      font-size: 14px;
+      z-index: 1000;
+    }
+
     footer {
       text-align: center;
       margin: 30px 0;
       opacity: 0.7;
       font-size: 14px;
     }
-
-    a {
-      color: #ff9ccf;
-      text-decoration: none;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Romantic Music -->
-  <audio autoplay loop>
+  <!-- 🎵 Background Music -->
+  <audio id="bgMusic" loop>
     <source src="love.mp3" type="audio/mpeg">
   </audio>
+
+  <button id="musicBtn" class="secondary" onclick="toggleMusic()">
+    ▶ Play Music
+  </button>
 
   <!-- AUTH -->
   <div id="auth" class="card">
@@ -132,15 +142,20 @@
 
   <script type="module" src="app.js"></script>
 
+  <!-- 🎶 Music Control Script -->
   <script>
-    const shareLink = document.getElementById("shareLink");
-    const waShare = document.getElementById("waShare");
+    const music = document.getElementById("bgMusic");
+    const btn = document.getElementById("musicBtn");
 
-    shareLink?.addEventListener("input", () => {
-      waShare.href =
-        "https://wa.me/?text=" +
-        encodeURIComponent("💖 Someone sent you a Valentine 💖\n" + shareLink.value);
-    });
+    function toggleMusic() {
+      if (music.paused) {
+        music.play();
+        btn.innerText = "⏸ Pause Music";
+      } else {
+        music.pause();
+        btn.innerText = "▶ Play Music";
+      }
+    }
   </script>
 
 </body>
