@@ -1,146 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PH03NIX Valentine</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="firebase.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PH03NIX Valentine 💖</title>
+
+  <link rel="stylesheet" href="style.css" />
+
   <style>
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(120deg, #ffb6c1, #2c2c2c);
-      color: white;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #120014, #2b001f);
+      color: #fff;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
-    h1 { margin-top: 40px; text-align: center; }
-    .container { max-width: 400px; width: 90%; margin-top: 30px; }
-    input, textarea, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: none; }
-    input, textarea { font-size: 16px; }
-    button { font-size: 18px; cursor: pointer; }
-    .yes-no { display: flex; justify-content: space-between; }
-    .yes-no button { width: 48%; }
-    footer { margin-top: auto; padding: 10px; font-size: 12px; color: #ccc; text-align: center; }
-    audio { display: none; } /* hides the audio player but still plays */
+
+    h1, h2 {
+      color: #ff5fa2;
+      text-align: center;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 15px;
+      box-shadow: 0 0 25px rgba(255, 95, 162, 0.25);
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 15px;
+      border-radius: 12px;
+      border: none;
+      background: #ff5fa2;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #333;
+    }
+
+    #dashboard {
+      display: none;
+    }
+
+    .reply-card {
+      background: rgba(0,0,0,0.3);
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      margin: 30px 0;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    a {
+      color: #ff9ccf;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Romantic Song -->
-  <audio id="romanticSong" autoplay loop>
+  <!-- Romantic Music -->
+  <audio autoplay loop>
     <source src="love.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
   </audio>
 
-  <h1>💖 PH03NIX Valentine 💖</h1>
-
-  <div class="container" id="auth-container">
-    <h2>Login / Register</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="loginBtn">Login</button>
-    <button id="signupBtn">Sign Up</button>
+  <!-- AUTH -->
+  <div id="auth" class="card">
+    <h1>💖 PH03NIX Valentine 💖</h1>
+    <input id="emailInput" placeholder="Email">
+    <input id="passwordInput" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <button class="secondary" onclick="login()">Login</button>
   </div>
 
-  <div class="container" id="valentine-container" style="display:none;">
-    <h2>Create your Valentine</h2>
-    <input type="text" id="girlName" placeholder="Her Name">
-    <textarea id="message" placeholder="Your romantic message"></textarea>
-    <button id="sendBtn">Send Valentine ❤️</button>
+  <!-- DASHBOARD -->
+  <div id="dashboard">
 
-    <div style="margin-top:20px;">
-      <h3>Or share via WhatsApp</h3>
-      <button id="whatsappShare">Share on WhatsApp</button>
+    <!-- SEND VALENTINE -->
+    <div class="card">
+      <h2>Send a Valentine 💌</h2>
+      <input id="girlName" placeholder="Her name">
+      <textarea id="loveMessage" placeholder="Write your message..."></textarea>
+      <button onclick="sendValentine()">Send Valentine</button>
+
+      <input id="shareLink" readonly placeholder="Share link will appear here">
+
+      <a id="waShare" target="_blank">
+        <button class="secondary">Share on WhatsApp</button>
+      </a>
     </div>
+
+    <!-- GIRL REPLY -->
+    <div class="card">
+      <h2>Your Answer 💕</h2>
+      <button onclick="sayYes()">YES ❤️</button>
+      <button class="secondary" onclick="sayNo()">NO 💔</button>
+    </div>
+
+    <!-- REPLIES -->
+    <div class="card">
+      <h2>Your Replies 📩</h2>
+      <div id="replies"></div>
+    </div>
+
   </div>
 
-  <div class="container" id="reply-container" style="display:none;">
-    <h2>Replies</h2>
-    <div id="repliesList"></div>
-  </div>
+  <footer>
+    Powered by <b>PH03NIX</b> 🐦‍🔥
+  </footer>
 
-  <footer>Powered by PH03NIX</footer>
+  <script type="module" src="app.js"></script>
 
-  <script type="module">
-    import { auth, db } from './firebase.js';
-    import { signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  <script>
+    const shareLink = document.getElementById("shareLink");
+    const waShare = document.getElementById("waShare");
 
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const signupBtn = document.getElementById('signupBtn');
-
-    const authContainer = document.getElementById('auth-container');
-    const valentineContainer = document.getElementById('valentine-container');
-    const replyContainer = document.getElementById('reply-container');
-
-    const girlName = document.getElementById('girlName');
-    const message = document.getElementById('message');
-    const sendBtn = document.getElementById('sendBtn');
-    const whatsappShare = document.getElementById('whatsappShare');
-    const repliesList = document.getElementById('repliesList');
-
-    // AUTH
-    loginBtn.addEventListener('click', () => {
-      signInWithEmailAndPassword(auth, email.value, password.value)
-        .then(() => alert('Logged in!'))
-        .catch(e => alert(e.message));
-    });
-
-    signupBtn.addEventListener('click', () => {
-      createUserWithEmailAndPassword(auth, email.value, password.value)
-        .then(() => alert('Signed up!'))
-        .catch(e => alert(e.message));
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authContainer.style.display = 'none';
-        valentineContainer.style.display = 'block';
-        replyContainer.style.display = 'block';
-        loadReplies();
-      }
-    });
-
-    // SEND VALENTINE
-    sendBtn.addEventListener('click', async () => {
-      if (!girlName.value || !message.value) return alert('Fill both fields!');
-      await addDoc(collection(db, "valentines"), {
-        girlName: girlName.value,
-        message: message.value,
-        from: auth.currentUser.email,
-        timestamp: Date.now(),
-        reply: null
-      });
-      alert('Valentine sent!');
-      girlName.value = '';
-      message.value = '';
-    });
-
-    // LOAD REPLIES
-    async function loadReplies() {
-      repliesList.innerHTML = '';
-      const querySnapshot = await getDocs(collection(db, "valentines"));
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if(data.from === auth.currentUser.email) {
-          const div = document.createElement('div');
-          div.innerHTML = `<strong>To: ${data.girlName}</strong><br>Reply: ${data.reply || 'Pending'}`;
-          repliesList.appendChild(div);
-        }
-      });
-    }
-
-    // WHATSAPP SHARE
-    whatsappShare.addEventListener('click', () => {
-      const text = `Hey! I just sent a Valentine: "${message.value}" 💖`;
-      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-      window.open(url, '_blank');
+    shareLink?.addEventListener("input", () => {
+      waShare.href =
+        "https://wa.me/?text=" +
+        encodeURIComponent("💖 Someone sent you a Valentine 💖\n" + shareLink.value);
     });
   </script>
 
