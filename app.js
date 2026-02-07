@@ -1,4 +1,5 @@
 import { auth, db } from "./firebase.js";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -15,18 +16,28 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* ---------------- AUTH ---------------- */
+/* ================= AUTH ================= */
 
 window.register = async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  await createUserWithEmailAndPassword(auth, email, password);
+  const email = document.getElementById("emailInput").value;
+  const password = document.getElementById("passwordInput").value;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    alert(err.message);
+  }
 };
 
 window.login = async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  await signInWithEmailAndPassword(auth, email, password);
+  const email = document.getElementById("emailInput").value;
+  const password = document.getElementById("passwordInput").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (err) {
+    alert(err.message);
+  }
 };
 
 onAuthStateChanged(auth, user => {
@@ -37,53 +48,81 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* ---------------- SEND VALENTINE ---------------- */
+/* ================= SEND VALENTINE ================= */
 
 window.sendValentine = async () => {
-  const girl = girlName.value;
-  const message = loveMessage.value;
+  const girl = document.getElementById("girlName").value;
+  const message = document.getElementById("loveMessage").value;
 
-  const docRef = await addDoc(collection(db, "valentines"), {
-    boy: auth.currentUser.email,
-    girl,
-    message,
-    reply: "pending"
-  });
+  if (!girl || !message) {
+    alert("Please fill all fields 💖");
+    return;
+  }
 
-  const link = `${location.origin}?id=${docRef.id}`;
-  shareLink.value = link;
+  try {
+    const docRef = await addDoc(collection(db, "valentines"), {
+      boy: auth.currentUser.email,
+      girl: girl,
+      message: message,
+      reply: "Pending 💭"
+    });
+
+    const link = `${location.origin}?id=${docRef.id}`;
+
+    const shareLink = document.getElementById("shareLink");
+    shareLink.value = link;
+
+    // ✅ FIXED WHATSAPP SHARE
+    const wa = document.getElementById("waShare");
+    wa.href =
+      "https://wa.me/?text=" +
+      encodeURIComponent("💖 Someone sent you a Valentine 💖\n" + link);
+
+    alert("Valentine sent 💌");
+
+  } catch (err) {
+    alert(err.message);
+  }
 };
 
-/* ---------------- GIRL REPLY ---------------- */
+/* ================= GIRL REPLY ================= */
 
 async function handleReply(choice) {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
+
   if (!id) return;
 
-  await updateDoc(doc(db, "valentines", id), {
-    reply: choice
-  });
+  try {
+    await updateDoc(doc(db, "valentines", id), {
+      reply: choice
+    });
 
-  alert("Reply sent 💖");
+    alert("Reply sent 💖 Thank you!");
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 window.sayYes = () => handleReply("YES ❤️");
 window.sayNo = () => handleReply("NO 💔");
 
-/* ---------------- DASHBOARD ---------------- */
+/* ================= DASHBOARD ================= */
 
 async function loadReplies() {
+  const replies = document.getElementById("replies");
+  replies.innerHTML = "";
+
   const q = query(
     collection(db, "valentines"),
     where("boy", "==", auth.currentUser.email)
   );
 
   const snap = await getDocs(q);
-  replies.innerHTML = "";
 
   snap.forEach(docu => {
     const d = docu.data();
+
     replies.innerHTML += `
       <div class="reply-card">
         <b>${d.girl}</b><br>
