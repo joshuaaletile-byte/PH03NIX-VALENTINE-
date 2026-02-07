@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PH03NIX Valentine 💖</title>
 
-  <link rel="stylesheet" href="style.css" />
-
   <style>
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #120014, #2b001f);
       color: #fff;
       min-height: 100vh;
@@ -35,7 +33,6 @@
       margin-top: 10px;
       border-radius: 10px;
       border: none;
-      outline: none;
     }
 
     button {
@@ -69,10 +66,10 @@
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: auto;
       padding: 12px 18px;
       border-radius: 50px;
-      font-size: 14px;
+      background: #333;
+      color: #fff;
       z-index: 1000;
     }
 
@@ -80,20 +77,17 @@
       text-align: center;
       margin: 30px 0;
       opacity: 0.7;
-      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
-  <!-- 🎵 Background Music -->
+  <!-- 🎵 MUSIC -->
   <audio id="bgMusic" loop>
     <source src="love.mp3" type="audio/mpeg">
   </audio>
 
-  <button id="musicBtn" class="secondary" onclick="toggleMusic()">
-    ▶ Play Music
-  </button>
+  <button id="musicBtn" onclick="toggleMusic()">▶ Play Music</button>
 
   <!-- AUTH -->
   <div id="auth" class="card">
@@ -107,28 +101,23 @@
   <!-- DASHBOARD -->
   <div id="dashboard">
 
-    <!-- SEND VALENTINE -->
     <div class="card">
       <h2>Send a Valentine 💌</h2>
       <input id="girlName" placeholder="Her name">
       <textarea id="loveMessage" placeholder="Write your message..."></textarea>
       <button onclick="sendValentine()">Send Valentine</button>
-
       <input id="shareLink" readonly placeholder="Share link will appear here">
-
       <a id="waShare" target="_blank">
         <button class="secondary">Share on WhatsApp</button>
       </a>
     </div>
 
-    <!-- GIRL REPLY -->
     <div class="card">
       <h2>Your Answer 💕</h2>
       <button onclick="sayYes()">YES ❤️</button>
       <button class="secondary" onclick="sayNo()">NO 💔</button>
     </div>
 
-    <!-- REPLIES -->
     <div class="card">
       <h2>Your Replies 📩</h2>
       <div id="replies"></div>
@@ -140,9 +129,10 @@
     Powered by <b>PH03NIX</b> 🐦‍🔥
   </footer>
 
-  <script type="module" src="app.js"></script>
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- 🎶 Music Control Script -->
+  <!-- Music Script -->
   <script>
     const music = document.getElementById("bgMusic");
     const btn = document.getElementById("musicBtn");
@@ -157,6 +147,8 @@
       }
     }
   </script>
+
+  <script type="module" src="app.js"></script>
 
 </body>
 </html>
